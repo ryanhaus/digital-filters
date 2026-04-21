@@ -28,7 +28,8 @@ public:
     {
         for (size_t n = start; n <= end; n++)
         {
-            cout << "n = " << n << ": x(n) = " << this->signal.getSample(n) << endl;
+            complex<T> sample = this->signal.getSample(n);
+            cout << "n = " << n << ": x(n) = " << sample << "\t(mag: " << abs(sample) << ")" << endl;
         }
     }
 };
