@@ -1,5 +1,5 @@
 #pragma once
-#include "Signal.hpp"
+#include "../Signal.hpp"
 
 /*
  * Represents a digital filter that takes in a signal and outputs a filtered signal.

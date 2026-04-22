@@ -1,5 +1,5 @@
 #pragma once
-#include "Signal.hpp"
+#include "../Signal.hpp"
 #include <cmath>
 
 /**
