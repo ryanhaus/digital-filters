@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "sources/SinusoidalSource.hpp"
 #include "filters/FIRFilter.hpp"
+#include "utils/FIRCoefficientCalculator.hpp"
 #include "sinks/ConsoleSink.hpp"
 
 int main()
@@ -9,12 +10,12 @@ int main()
     // source: sine wave
     SinusoidalSource<double> source (
         1000000,
-        2 * M_PI * 250000,
+        2 * M_PI * 200000,
         0
     );
 
     // FIR filter
-    vector<double> firTaps = { -0.0265, 0, 0.0441, 0, -0.0934, 0, 0.3139, 0.5000, 0.3139, 0, -0.0934, 0, 0.0441, 0, -0.0265 }; // from https://www.hackster.io/whitney-knitter/dsp-for-fpga-simple-fir-filter-in-verilog-91208d
+    vector<double> firTaps = FIRCoefficientCalculator<double>::calculateLowPassCoefficients(1000000, 200000, 18);
     FIRFilter<double> firFilter(source, firTaps);
 
     // console output
