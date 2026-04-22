@@ -59,6 +59,30 @@ public:
 
         return taps;
     }
+
+    /**
+     * Computes coefficients/taps for a high-pass FIR filter.
+     *
+     * @param samplingFreq The sampling frequency of the signal.
+     * @param cutoffFreq The cutoff frequency of the filter.
+     * @param M The order of the filter (must be even).
+     * @param windowFunction (optional) The window function. Default: rectangular window
+     */
+    static vector<T> calculateHighPassCoefficients(T samplingFreq, T cutoffFreq, int M, T(*windowFunction)(int, int) = rectangularWindow<T>)
+    {
+        // First, create a lowpass filter
+        vector<T> taps = calculateLowPassCoefficients(samplingFreq, cutoffFreq, M, windowFunction);
+
+        // Then, do spectral inversion to convert from low-pass to high-pass
+        for (T& tap : taps)
+        {
+            tap *= -1;
+        }
+
+        taps[M/2] += 1;
+
+        return taps;
+    }
     
 private:
     /**
