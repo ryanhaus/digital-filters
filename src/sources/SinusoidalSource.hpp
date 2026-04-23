@@ -12,12 +12,12 @@ public:
     /**
      * Initializes a complex sinusoidal signal source with a given frequency and phase.
      *
-     * @param sampling_freq The sampling frequency of the signal.
+     * @param samplingFreq The sampling frequency of the signal.
      * @param freq The frequency in radians per second.
      * @param phase The phase in radians.
      */
-    SinusoidalSource<T>(T sampling_freq, T freq, T phase)
-        : sampling_freq(sampling_freq),
+    SinusoidalSource<T>(T samplingFreq, T freq, T phase)
+        : samplingFreq(samplingFreq),
           freq(freq),
           phase(phase)
     {}
@@ -25,13 +25,13 @@ public:
     complex<T> getSample(size_t n)
     {
         const complex<T> j(0, 1);
-        T time = (T)n / this->sampling_freq;
+        T time = (T)n / this->samplingFreq;
 
         return exp(j * (this->freq * time + this->phase));
     }
 
-private:
-    T sampling_freq; //!< Sampling frequency of the signal.
+protected:
+    T samplingFreq; //!< Sampling frequency of the signal.
     T freq; //!< Frequency of sinusoidal signal in radians per second.
     T phase; //!< Phase shift of sinusoidal signal in radians.
 };
