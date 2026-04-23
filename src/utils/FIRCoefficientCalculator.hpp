@@ -8,15 +8,25 @@ using std::min;
 /**
  * Represents a rectangular window (all values within window are 1)
  *
- * @param n Value at which to evaluate window at.
+ * @param n Value at which to evaluate the window at.
  * @param M The order of the filter.
  */
 template<typename T>
 T rectangularWindow(int n, int M)
 {
-    return (n >= 0) && (n <= M)
-        ? (T)1
-        : (T)0;
+    return (T)1;
+}
+
+/**
+ * Represents a Hamming window.
+ *
+ * @param n Value at which to evaluate the window at.
+ * @param M The order of the filter.
+ */
+template<typename T>
+T hammingWindow(int n, int M)
+{
+    return (T)0.54 - (T)0.46 * cos(2 * M_PI * n / M);
 }
 
 template<typename T>
