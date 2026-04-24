@@ -4,10 +4,10 @@
 #include "filters/Decimator.hpp"
 #include "sinks/PlotSink.hpp"
 
-#include <matplot/matplot.h>
-
 int main()
 {
+    // Example: 100-400 kHz band-pass filter with 1 MHz sampling frequency
+    
     // source: sine wave
     SweepSinusoidalSource<double> source (
         1000000,
