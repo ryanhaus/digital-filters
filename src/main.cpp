@@ -1,10 +1,10 @@
-#include <iostream>
-#include <iomanip>
 #include "sources/SweepSinusoidalSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
 #include "filters/Decimator.hpp"
-#include "sinks/ConsoleSink.hpp"
+#include "sinks/PlotSink.hpp"
+
+#include <matplot/matplot.h>
 
 int main()
 {
@@ -13,7 +13,7 @@ int main()
         1000000,
         2 * M_PI * 0,
         100,
-        2 * M_PI * 10000,
+        2 * M_PI * 1000,
         0
     );
 
@@ -33,11 +33,9 @@ int main()
     // decimate transition samples
     Decimator<double> decimator(firFilter, 100, 99);
 
-    // console output
-    std::cout << std::fixed << std::setprecision(3);
-    ConsoleSink<double> sink(decimator);
-
-    sink.printSamples(0, 50);
+    // plot output
+    PlotSink<double> plot(decimator);
+    plot.plotSamples(0, 500, 0.0, 500000.0);
 
     return 0;
 }
