@@ -7,12 +7,9 @@ using std::min;
 
 /**
  * Represents a rectangular window (all values within window are 1)
- *
- * @param n Value at which to evaluate the window at.
- * @param M The order of the filter.
  */
 template<typename T>
-T rectangularWindow(int n, int M)
+T rectangularWindow(int, int)
 {
     return (T)1;
 }
