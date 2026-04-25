@@ -17,8 +17,8 @@ public:
     PlotSink(Signal<T>& signal)
         : SignalSink<T>(signal)
     {
-        figure_handle f = figure();
-        f->backend()->run_command("unset warnings"); // avoid annoying gnuplot warnings
+        this->f = figure();
+        this->f->backend()->run_command("unset warnings"); // avoid annoying gnuplot warnings
     }
 
     /**
@@ -49,7 +49,7 @@ public:
         plot(freq, responseImaginary)->line_width(2);
         show();
 
-        return f;
+        return this->f;
     }
 
 private:
