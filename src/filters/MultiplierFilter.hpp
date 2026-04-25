@@ -17,10 +17,10 @@ public:
      *                            independently based on the real and imaginary
      *                            components of 'c'.
      */
-    MultiplierFilter(Signal<T>& inputSignal, complex<T> c, bool realImagIndepdenent = false)
+    MultiplierFilter(Signal<T>& inputSignal, complex<T> c, bool realImagIndependent = false)
         : Filter<T>(inputSignal),
           c(c),
-          realImagIndependent(realImagIndepdenent)
+          realImagIndependent(realImagIndependent)
     {}
 
     complex<T> nextSample()
