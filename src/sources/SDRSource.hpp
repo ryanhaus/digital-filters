@@ -18,12 +18,13 @@ class SDRSource : public Signal<T>
 {
 public:
     /**
-     * Initializes an SDR source. Assumes only one SDR device is connected.
+     * Initializes an SDR source. For now, assumes an RTL-SDR device is connected.
      *
      * @param samplingFrequency The rate at which the SDR device will be configured to sample.
      * @param sdrFrequency The frequency the SDR will be tuned to.
+     * @param sdrGain Gain of RX in dB.
      */
-    SDRSource(T samplingFrequency, T sdrFrequency)
+    SDRSource(T samplingFrequency, T sdrFrequency, T sdrGain)
         : bufferLen(0),
           bufferPtr(0)
     {
@@ -89,6 +90,7 @@ public:
         printf("\n");
 
         // set given settings
+        sdr->setGain(SOAPY_SDR_RX, 0, sdrGain);
         sdr->setSampleRate(SOAPY_SDR_RX, 0, samplingFrequency);
         sdr->setFrequency(SOAPY_SDR_RX, 0, sdrFrequency);
 
