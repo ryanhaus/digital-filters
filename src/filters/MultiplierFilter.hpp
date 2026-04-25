@@ -23,9 +23,9 @@ public:
           realImagIndependent(realImagIndepdenent)
     {}
 
-    complex<T> getSample(size_t n)
+    complex<T> nextSample()
     {
-        complex<T> sample = this->inputSignal.getSample(n);
+        complex<T> sample = this->inputSignal.nextSample();
 
         if (realImagIndependent)
         {

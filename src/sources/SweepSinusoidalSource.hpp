@@ -25,11 +25,11 @@ public:
           deltaFreq(deltaFreq)
     {}
 
-    complex<T> getSample(size_t n)
+    complex<T> nextSample()
     {
-        this->freq = freqStart + deltaFreq * (T)(n / samplesPerFreq);
+        this->freq = freqStart + deltaFreq * (T)(this->n / samplesPerFreq);
 
-        return SinusoidalSource<T>::getSample(n);
+        return SinusoidalSource<T>::nextSample();
     }
 
 private:

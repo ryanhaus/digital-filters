@@ -35,7 +35,7 @@ int main()
 
     // plot output
     PlotSink<double> plot(decimator);
-    plot.plotSamples(0, 500, 0.0, 500000.0);
+    plot.plotSamples(500, 0.0, 500000.0);
 
     return 0;
 }

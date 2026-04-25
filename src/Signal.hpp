@@ -1,5 +1,4 @@
 #pragma once
-#include <cstddef>
 #include <complex>
 
 using std::complex;
@@ -18,5 +17,5 @@ public:
      *
      * @param n Sample number
      */
-    virtual complex<T> getSample(size_t n) = 0;
+    virtual complex<T> nextSample() = 0;
 };

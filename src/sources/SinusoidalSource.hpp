@@ -19,13 +19,15 @@ public:
     SinusoidalSource<T>(T samplingFreq, T freq, T phase)
         : samplingFreq(samplingFreq),
           freq(freq),
-          phase(phase)
+          phase(phase),
+          n(0)
     {}
 
-    complex<T> getSample(size_t n)
+    complex<T> nextSample()
     {
         const complex<T> j(0, 1);
-        T time = (T)n / this->samplingFreq;
+        T time = (T)this->n / this->samplingFreq;
+        this->n++;
 
         return exp(j * (this->freq * time + this->phase));
     }
@@ -34,4 +36,5 @@ protected:
     T samplingFreq; //!< Sampling frequency of the signal.
     T freq; //!< Frequency of sinusoidal signal in radians per second.
     T phase; //!< Phase shift of sinusoidal signal in radians.
+    size_t n; //!< Current sample number
 };

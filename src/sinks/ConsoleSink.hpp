@@ -21,14 +21,13 @@ public:
     /**
      * Prints samples over a given range to the console.
      *
-     * @param start Starting sample number.
-     * @param end Ending sample number (included).
+     * @param nSamples Number of samples to take.
      */
-    void printSamples(size_t start, size_t end)
+    void printSamples(size_t nSamples)
     {
-        for (size_t n = start; n <= end; n++)
+        for (size_t n = 0; n < nSamples; n++)
         {
-            complex<T> sample = this->signal.getSample(n);
+            complex<T> sample = this->signal.nextSample();
             cout << "n = " << n << ": x(n) = " << sample << "\t(mag: " << abs(sample) << ")" << endl;
         }
     }

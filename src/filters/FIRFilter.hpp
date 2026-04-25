@@ -1,8 +1,10 @@
 #pragma once
 #include "Filter.hpp"
 #include <vector>
+#include <deque>
 
 using std::vector;
+using std::deque;
 
 template<typename T>
 class FIRFilter : public Filter<T>
@@ -18,25 +20,37 @@ public:
     FIRFilter(Signal<T>& inputSignal, vector<T> taps)
         : Filter<T>(inputSignal),
           taps(taps)
-    {}
-
-    complex<T> getSample(size_t n)
     {
+        // create empty sample buffer with enough samples to match the number of taps
+        this->sampleBuffer = deque<complex<T>>();
+
+        for (size_t i = 0; i < taps.size(); i++)
+        {
+            this->sampleBuffer.push_front((T)0);
+        }
+    }
+
+    complex<T> nextSample()
+    {
+        // update sample buffer with new sample
+        complex<T> newSample = this->inputSignal.nextSample();
+        this->sampleBuffer.pop_back();
+        this->sampleBuffer.push_front(newSample);
+
+        // compute sample
         complex<T> result = 0;
 
         for (size_t i = 0; i < this->taps.size(); i++)
         {
-            if (n >= i)
-            {
-                T tap = this->taps[i];
-                complex<T> inputSample = this->inputSignal.getSample(n - i);
+            T tap = this->taps[i];
+            complex<T> inputSample = this->sampleBuffer.at(i);
 
-                result += tap * inputSample;
-            }
+            result += tap * inputSample;
         }
 
         return result;
     }
 private:
     vector<T> taps;
+    deque<complex<T>> sampleBuffer;
 };

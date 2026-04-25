@@ -21,15 +21,12 @@ public:
     /**
      * Plots samples over a given range to the console.
      *
-     * @param start Starting sample number.
-     * @param end Ending sample number (included).
+     * @param nSamples Number of samples to take
      * @param startBound The starting bound of the plot (defaults to '')
      * @param endBound The starting bound of the plot (defaults to 'end')
      */
-    figure_handle plotSamples(size_t start, size_t end, T startBound, T endBound)
+    figure_handle plotSamples(size_t nSamples, T startBound, T endBound)
     {
-        size_t nSamples = end - start;
-        
         figure_handle f = figure();
         f->backend()->run_command("unset warnings"); // avoid annoying gnuplot warnings
                                                            
@@ -37,9 +34,9 @@ public:
         vector<double> response;
         response.reserve(nSamples);
 
-        for (size_t n = start; n <= end; n++)
+        for (size_t n = 0; n < nSamples; n++)
         {
-            complex<T> sample = this->signal.getSample(n);
+            complex<T> sample = this->signal.nextSample();
             response.push_back(abs(sample));
         }
 

@@ -21,10 +21,21 @@ public:
           offset(offset)
     {}
 
-    complex<T> getSample(size_t n)
+    complex<T> nextSample()
     {
-        size_t newN = n * this->N + this->offset;
-        return this->inputSignal.getSample(newN);
+        complex<T> desiredSample = 0;
+
+        for (int i = 0; i < N; i++)
+        {
+            complex<T> currentSample = this->inputSignal.nextSample();
+
+            if (i == this->offset)
+            {
+                desiredSample = currentSample;
+            }
+        }
+
+        return desiredSample;
     }
 
 private:
