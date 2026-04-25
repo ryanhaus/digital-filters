@@ -15,7 +15,7 @@ public:
      *
      * @param The signal going into the sink.
      */
-    SignalSink<T>(Signal<T>& signal)
+    SignalSink(Signal<T>& signal)
         : signal(signal)
     {}
 

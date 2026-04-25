@@ -14,7 +14,7 @@ public:
      *
      * @param signal The signal going into the sink.
      */
-    ConsoleSink<T>(Signal<T>& signal)
+    ConsoleSink(Signal<T>& signal)
     : SignalSink<T>(signal)
     {}
 

@@ -1,4 +1,5 @@
 #include "sources/SweepSinusoidalSource.hpp"
+#include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
 #include "filters/Decimator.hpp"
@@ -7,35 +8,29 @@
 int main()
 {
     // Example: 100-400 kHz band-pass filter with 1 MHz sampling frequency
-    
-    // source: sine wave
-    SweepSinusoidalSource<double> source (
-        1000000,
-        2 * M_PI * 0,
-        100,
-        2 * M_PI * 1000,
-        0
-    );
+    float samplingFreq = 3e6;
+    float sdrFreq = 89e6;
+    SDRSource<float> source(samplingFreq, sdrFreq);
 
     // FIR filter
-    vector<double> firTaps =
-        FIRCoefficientCalculator<double>::calculateBandPassCoefficients(
-            1000000, 
-            100000,
-            400000,
-            40,
-            hammingWindow<double>
+    vector<float> firTaps =
+        FIRCoefficientCalculator<float>::calculateBandPassCoefficients(
+            samplingFreq, 
+            600000,
+            800000,
+            100,
+            hammingWindow<float>
         );
 
-    FIRFilter<double> firFilter(source, firTaps);
+    FIRFilter<float> firFilter(source, firTaps);
     //for (auto tap : firTaps) std::cout << tap << std::endl;
     
     // decimate transition samples
-    Decimator<double> decimator(firFilter, 100, 99);
+    Decimator<float> decimator(firFilter, 100, 0);
 
     // plot output
-    PlotSink<double> plot(decimator);
-    plot.plotSamples(500, 0.0, 500000.0);
+    PlotSink<float> plot(firFilter);
+    plot.plotSamples(1000, 0.0, 1.0);
 
     return 0;
 }

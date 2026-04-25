@@ -5,6 +5,7 @@ Experiments with digital filters
  - [cmake](https://cmake.org/) (and a C++ compiler)
  - [gnuplot](http://www.gnuplot.info/)
  - [Matplot++](https://github.com/alandefreitas/matplotplusplus/)
+ - [SoapySDR](https://github.com/pothosware/SoapySDR)
  - [Doxygen](https://www.doxygen.nl/) (for documentation)
 
 ## Compiling

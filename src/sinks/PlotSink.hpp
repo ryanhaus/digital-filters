@@ -14,7 +14,7 @@ public:
      *
      * @param signal The signal going into the sink.
      */
-    PlotSink<T>(Signal<T>& signal)
+    PlotSink(Signal<T>& signal)
         : SignalSink<T>(signal)
     {}
 

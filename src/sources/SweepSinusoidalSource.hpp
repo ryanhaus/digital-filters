@@ -18,7 +18,7 @@ public:
      * @param deltaFreq How much to increase the frequency by per step
      * @param phase The phase in radians.
      */
-    SweepSinusoidalSource<T>(T samplingFreq, T freqStart, size_t samplesPerFreq, T deltaFreq, T phase)
+    SweepSinusoidalSource(T samplingFreq, T freqStart, size_t samplesPerFreq, T deltaFreq, T phase)
         : SinusoidalSource<T>(samplingFreq, freqStart, phase),
           freqStart(freqStart),
           samplesPerFreq(samplesPerFreq),

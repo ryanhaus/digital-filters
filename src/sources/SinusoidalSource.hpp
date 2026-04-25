@@ -16,7 +16,7 @@ public:
      * @param freq The frequency in radians per second.
      * @param phase The phase in radians.
      */
-    SinusoidalSource<T>(T samplingFreq, T freq, T phase)
+    SinusoidalSource(T samplingFreq, T freq, T phase)
         : samplingFreq(samplingFreq),
           freq(freq),
           phase(phase),
