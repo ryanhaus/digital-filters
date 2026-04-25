@@ -26,6 +26,21 @@ T hammingWindow(int n, int M)
     return (T)0.54 - (T)0.46 * cos(2 * M_PI * n / M);
 }
 
+/**
+ * Represents a Blackman window.
+ *
+ * @param n Value at which to evaluate the window at.
+ * @param M The order of the filter.
+ */
+template<typename T>
+T blackmanWindow(int n, int M)
+{
+    return
+        (T)0.42
+        - (T)0.5 * cos(2 * M_PI * n / M)
+        + (T)0.08 * cos(4 * M_PI * n / M);
+}
+
 template<typename T>
 class FIRCoefficientCalculator
 {
