@@ -13,9 +13,9 @@ public:
      *
      * @param inputSignal The input signal of the filter.
      * @param N The number of input samples per output sample
-     * @param offset How much to offset the first sample by
+     * @param offset (optional) How much to offset the first sample by. Default: 0
      */
-    Decimator(Signal<T>& inputSignal, size_t N, size_t offset)
+    Decimator(Signal<T>& inputSignal, size_t N, size_t offset = 0)
         : Filter<T>(inputSignal),
           N(N),
           offset(offset)
