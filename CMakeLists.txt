@@ -3,6 +3,7 @@ project(digital-filters)
 
 find_package(Matplot++ REQUIRED)
 find_package(SoapySDR CONFIG REQUIRED)
+find_package(SFML 2.6 COMPONENTS audio REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -17,4 +18,5 @@ target_link_libraries(main
     PRIVATE
         Matplot++::matplot
         SoapySDR
+        sfml-audio
 )

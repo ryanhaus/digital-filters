@@ -9,6 +9,7 @@
 #include "filters/CustomFilter.hpp"
 #include "sinks/PlotSink.hpp"
 #include "sinks/ConsoleSink.hpp"
+#include "sinks/AudioSink.hpp"
 
 int main()
 {
@@ -58,15 +59,12 @@ int main()
     // decimate again to 48 kHz
     Decimator<float> decimated48kHz(firFilterDeemph, 5);
 
-    // plot output
-    //PlotSink<float> plot(firFilterDeemph);
-    //plot.plotSamples(1000, 0.0, 1.0);
+    // play output as audio
+    AudioSink<float> audio(decimated48kHz, 48000);
 
-    // print 200,000 samples
-    for (int i = 0; i < 200000; i++)
-    {
-        std::cout << decimated48kHz.nextSample().real() << std::endl;
-    }
+    audio.play();
+    while(audio.getStatus() == sf::SoundStream::Playing)
+        sf::sleep(sf::seconds(0.1f));
 
     return 0;
 }
