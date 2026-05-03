@@ -2,16 +2,11 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
 #include <stdexcept>
-#include "filters/MultiplierFilter.hpp"
-#include "filters/SampleDifferentiator.hpp"
 #include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
 #include "filters/Decimator.hpp"
-#include "filters/ComplexToArg.hpp"
-#include "filters/SampleDifferentiator.hpp"
 #include "filters/CustomFilter.hpp"
-#include "sinks/PlotSink.hpp"
 #include "sinks/ConsoleSink.hpp"
 #include "sinks/AudioSink.hpp"
 
