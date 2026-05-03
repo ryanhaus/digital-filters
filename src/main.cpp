@@ -39,7 +39,7 @@ int main()
 
     // FIR filter
     vector<float> firTapsLP =
-        FIRCoefficientCalculator<float>::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
+        FIRCoefficientCalculator::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
 
     FIRFilter<float> firFilterLP(source, firTapsLP);
     
@@ -62,7 +62,7 @@ int main()
 
     // FM deemphasis (approximate)
     vector<float> firTapsDeemph =
-        FIRCoefficientCalculator<float>::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
+        FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
 
     FIRFilter<float> firFilterDeemph(phaseChange, firTapsDeemph);
 

@@ -8,11 +8,7 @@ using std::min;
 /**
  * Represents a rectangular window (all values within window are 1)
  */
-template<typename T>
-T rectangularWindow(int, int)
-{
-    return (T)1;
-}
+float rectangularWindow(int, int);
 
 /**
  * Represents a Hamming window.
@@ -20,11 +16,7 @@ T rectangularWindow(int, int)
  * @param n Value at which to evaluate the window at.
  * @param M The order of the filter.
  */
-template<typename T>
-T hammingWindow(int n, int M)
-{
-    return (T)0.54 - (T)0.46 * cos(2 * M_PI * n / M);
-}
+float hammingWindow(int n, int M);
 
 /**
  * Represents a Blackman window.
@@ -32,16 +24,8 @@ T hammingWindow(int n, int M)
  * @param n Value at which to evaluate the window at.
  * @param M The order of the filter.
  */
-template<typename T>
-T blackmanWindow(int n, int M)
-{
-    return
-        (T)0.42
-        - (T)0.5 * cos(2 * M_PI * n / M)
-        + (T)0.08 * cos(4 * M_PI * n / M);
-}
+float blackmanWindow(int n, int M);
 
-template<typename T>
 class FIRCoefficientCalculator
 {
 public:
@@ -53,35 +37,7 @@ public:
      * @param M The order of the filter (must be even).
      * @param windowFunction (optional) The window function. Default: rectangular window
      */
-    static vector<T> calculateLowPassCoefficients(T samplingFreq, T cutoffFreq, int M, T(*windowFunction)(int, int) = rectangularWindow<T>)
-    {
-        vector<T> taps;
-        taps.reserve(M + 1);
-
-        // Calculate using sinc function
-        T normCutoffFreq = cutoffFreq / samplingFreq;
-
-        for (int n = 0; n <= M; n++)
-        {
-            T x = (T)2 * normCutoffFreq * (T)(n - M/2);
-            T tap = sinc(x);
-            taps.push_back(tap * windowFunction(n, M));
-        }
-
-        // Normalize for unity gain
-        T sum = (T)0;
-        for (T tap : taps)
-        {
-            sum += tap;
-        }
-
-        for (T& tap : taps)
-        {
-            tap /= sum;
-        }
-
-        return taps;
-    }
+    static vector<float> calculateLowPassCoefficients(float samplingFreq, float cutoffFreq, int M, float(*windowFunction)(int, int) = rectangularWindow);
 
     /**
      * Computes coefficients/taps for a high-pass FIR filter.
@@ -91,21 +47,7 @@ public:
      * @param M The order of the filter (must be even).
      * @param windowFunction (optional) The window function. Default: rectangular window
      */
-    static vector<T> calculateHighPassCoefficients(T samplingFreq, T cutoffFreq, int M, T(*windowFunction)(int, int) = rectangularWindow<T>)
-    {
-        // First, create a lowpass filter
-        vector<T> taps = calculateLowPassCoefficients(samplingFreq, cutoffFreq, M, windowFunction);
-
-        // Then, do spectral inversion to convert from low-pass to high-pass
-        for (T& tap : taps)
-        {
-            tap *= -1;
-        }
-
-        taps[M/2] += 1;
-
-        return taps;
-    }
+    static vector<float> calculateHighPassCoefficients(float samplingFreq, float cutoffFreq, int M, float(*windowFunction)(int, int) = rectangularWindow);
 
     /**
      * Computes coefficients/taps for a high-pass FIR filter.
@@ -116,44 +58,16 @@ public:
      * @param M The order of the filter (must be even).
      * @param windowFunction (optional) The window function. Default: rectangular window
      */
-    static vector<T> calculateBandPassCoefficients(T samplingFreq, T cutoffFreqLow, T cutoffFreqHigh, int M, T(*windowFunction)(int, int) = rectangularWindow<T>)
-    {
-        // Create a low pass and a high pass filter with the given frequencies
-        vector<T> lowpassTaps = calculateLowPassCoefficients(samplingFreq, cutoffFreqHigh, M, windowFunction);
-        vector<T> highpassTaps = calculateHighPassCoefficients(samplingFreq, cutoffFreqLow, M, windowFunction);
-
-        // Convolute the taps to create a band pass taps
-        vector<T> taps = convolute(lowpassTaps, highpassTaps);
-        return taps;
-    }
+    static vector<float> calculateBandPassCoefficients(float samplingFreq, float cutoffFreqLow, float cutoffFreqHigh, int M, float(*windowFunction)(int, int) = rectangularWindow);
     
 private:
     /**
      * Calculates sinc(x)
      */
-    static T sinc(T x)
-    {
-        return (x == (T)0)
-            ? (T)1
-            : sin(M_PI * x) / (M_PI * x);
-    }
+    static float sinc(float x);
 
     /**
      * Calculates the convolution of two signals
      */
-    static vector<T> convolute(vector<T> a, vector<T> b)
-    {
-        size_t convolutionN = a.size() + b.size() - 1;
-        vector<T> out(convolutionN, (T)0);
-
-        for (size_t i = 0; i < a.size(); i++)
-        {
-            for (size_t j = 0; j < b.size(); j++)
-            {
-                out[i + j] += a[i] * b[j];
-            }
-        }
-
-        return out;
-    }
+    static vector<float> convolute(vector<float> a, vector<float> b);
 };
