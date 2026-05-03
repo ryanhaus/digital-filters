@@ -6,7 +6,7 @@ Experiments with digital filters
  - [gnuplot](http://www.gnuplot.info/)
  - [Matplot++](https://github.com/alandefreitas/matplotplusplus/)
  - [SoapySDR](https://github.com/pothosware/SoapySDR)
- - [SFML 2.6](https://github.com/SFML/SFML)
+ - [SDL3](https://github.com/libsdl-org/SDL)
  - [Doxygen](https://www.doxygen.nl/) (for documentation)
 
 ## Compiling

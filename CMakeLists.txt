@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.23)
 project(digital-filters)
 
+find_package(SDL3 REQUIRED)
 find_package(Matplot++ REQUIRED)
 find_package(SoapySDR CONFIG REQUIRED)
-find_package(SFML 2.6 COMPONENTS audio REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -16,7 +16,7 @@ target_sources(main
 
 target_link_libraries(main
     PRIVATE
+        SDL3::SDL3
         Matplot++::matplot
         SoapySDR
-        sfml-audio
 )

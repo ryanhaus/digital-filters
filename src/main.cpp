@@ -1,3 +1,7 @@
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_init.h>
+#include <stdexcept>
 #include "filters/MultiplierFilter.hpp"
 #include "filters/SampleDifferentiator.hpp"
 #include "sources/SDRSource.hpp"
@@ -13,6 +17,21 @@
 
 int main()
 {
+    // init
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+        throw std::runtime_error("Could not initialize SDL");
+
+    // create window
+    SDL_Window* window = SDL_CreateWindow("SDL test", 1280, 720, SDL_WINDOW_RESIZABLE);
+    if (window == nullptr)
+        throw std::runtime_error("Could not create SDL window: " + std::string(SDL_GetError()));
+
+    // create renderer
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
+    SDL_SetRenderVSync(renderer, 1);
+    if (renderer == nullptr)
+        throw std::runtime_error("Could not create SDL renderer: " + std::string(SDL_GetError()));
+
     /* referenced: https://www.site2241.net/march2025.htm */
     // tune to FM 89.7 MHz
     float samplingFreq = 2.4e6;
@@ -62,9 +81,25 @@ int main()
     // play output as audio
     AudioSink<float> audio(decimated48kHz, 48000);
 
-    audio.play();
-    while(audio.getStatus() == sf::SoundStream::Playing)
-        sf::sleep(sf::seconds(0.1f));
+    bool active = true;
+    while (active)
+    {
+        SDL_Event e;
+        while (SDL_PollEvent(&e))
+        {
+            if (e.type == SDL_EVENT_QUIT || e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
+                active = false;
+        }
+
+        audio.handleAudio();
+
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
