@@ -13,7 +13,7 @@ To compile, run the following:
 
 ```sh
 $ cmake -B bin
-$ cmake --build bin
+$ cmake --build bin -j $(nproc)
 ```
 
 The generated executable is `./bin/main`.
