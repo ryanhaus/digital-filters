@@ -11,6 +11,18 @@ add_executable(main)
 target_sources(main
     PRIVATE
         src/main.cpp
+
+        src/sources/SinusoidalSource.cpp
+        src/sources/SweepSinusoidalSource.cpp
+        src/sources/SDRSource.cpp
+
+        src/filters/FIRFilter.cpp
+        src/filters/Decimator.cpp
+        src/filters/CustomFilter.cpp
+
+        src/sinks/ConsoleSink.cpp
+        src/sinks/AudioSink.cpp
+
         src/utils/FIRCoefficientCalculator.cpp
 )
 

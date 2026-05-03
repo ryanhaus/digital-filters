@@ -4,8 +4,7 @@
 /**
  * Represents a decimator that downsamples a signal
  */
-template<typename T>
-class Decimator : public Filter<T>
+class Decimator : public Filter
 {
 public:
     /**
@@ -15,28 +14,9 @@ public:
      * @param N The number of input samples per output sample
      * @param offset (optional) How much to offset the first sample by. Default: 0
      */
-    Decimator(Signal<T>& inputSignal, size_t N, size_t offset = 0)
-        : Filter<T>(inputSignal),
-          N(N),
-          offset(offset)
-    {}
+    Decimator(Signal& inputSignal, size_t N, size_t offset = 0);
 
-    complex<T> nextSample()
-    {
-        complex<T> desiredSample = 0;
-
-        for (size_t i = 0; i < N; i++)
-        {
-            complex<T> currentSample = this->inputSignal.nextSample();
-
-            if (i == this->offset)
-            {
-                desiredSample = currentSample;
-            }
-        }
-
-        return desiredSample;
-    }
+    complex<float> nextSample();
 
 private:
     size_t N; //<! The number of input samples per output sample

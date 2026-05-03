@@ -4,8 +4,7 @@
 /*
  * Represents a digital filter that takes in a signal and outputs a filtered signal.
  */
-template<typename T>
-class Filter : public Signal<T>
+class Filter : public Signal
 {
 public:
     /*
@@ -13,12 +12,12 @@ public:
      *
      * @param inputSignal The input signal of the filter.
      */
-    Filter(Signal<T>& inputSignal)
+    Filter(Signal& inputSignal)
         : inputSignal(inputSignal)
     {}
 
     virtual ~Filter() = default;
 
 protected:
-    Signal<T>& inputSignal; //<! The input signal of the filter.
+    Signal& inputSignal; //<! The input signal of the filter.
 };

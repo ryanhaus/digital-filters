@@ -5,8 +5,7 @@
 /**
  * Represents a complex sinusoidal signal.
  */
-template<typename T>
-class SinusoidalSource : public Signal<T>
+class SinusoidalSource : public Signal
 {
 public:
     /**
@@ -16,25 +15,13 @@ public:
      * @param freq The frequency in radians per second.
      * @param phase The phase in radians.
      */
-    SinusoidalSource(T samplingFreq, T freq, T phase)
-        : samplingFreq(samplingFreq),
-          freq(freq),
-          phase(phase),
-          n(0)
-    {}
+    SinusoidalSource(float samplingFreq, float freq, float phase);
 
-    complex<T> nextSample()
-    {
-        const complex<T> j(0, 1);
-        T time = (T)this->n / this->samplingFreq;
-        this->n++;
-
-        return exp(j * (this->freq * time + this->phase));
-    }
+    complex<float> nextSample();
 
 protected:
-    T samplingFreq; //!< Sampling frequency of the signal.
-    T freq; //!< Frequency of sinusoidal signal in radians per second.
-    T phase; //!< Phase shift of sinusoidal signal in radians.
+    float samplingFreq; //!< Sampling frequency of the signal.
+    float freq; //!< Frequency of sinusoidal signal in radians per second.
+    float phase; //!< Phase shift of sinusoidal signal in radians.
     size_t n; //!< Current sample number
 };

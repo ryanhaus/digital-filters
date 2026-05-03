@@ -6,7 +6,6 @@ using std::complex;
 /**
  * Represents a complex signal.
  */
-template<typename T>
 class Signal
 {
 public:
@@ -17,5 +16,5 @@ public:
      *
      * @param n Sample number
      */
-    virtual complex<T> nextSample() = 0;
+    virtual complex<float> nextSample() = 0;
 };

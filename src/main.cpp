@@ -35,19 +35,19 @@ int main()
 
     float fmDeviation = 100e3;
 
-    SDRSource<float> source(samplingFreq, sdrFreq, sdrGain);
+    SDRSource source(samplingFreq, sdrFreq, sdrGain);
 
     // FIR filter
     vector<float> firTapsLP =
         FIRCoefficientCalculator::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
 
-    FIRFilter<float> firFilterLP(source, firTapsLP);
+    FIRFilter firFilterLP(source, firTapsLP);
     
     // decimate to 240 kHz to reduce processing
-    Decimator<float> decimated240kHz(firFilterLP, 10);
+    Decimator decimated240kHz(firFilterLP, 10);
 
     // compute polar discriminator to find the change in phase
-    CustomFilter<float> phaseChange(
+    CustomFilter phaseChange(
         decimated240kHz,
         [](complex<float> sample)
         {
@@ -64,13 +64,13 @@ int main()
     vector<float> firTapsDeemph =
         FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
 
-    FIRFilter<float> firFilterDeemph(phaseChange, firTapsDeemph);
+    FIRFilter firFilterDeemph(phaseChange, firTapsDeemph);
 
     // decimate again to 48 kHz
-    Decimator<float> decimated48kHz(firFilterDeemph, 5);
+    Decimator decimated48kHz(firFilterDeemph, 5);
 
     // play output as audio
-    AudioSink<float> audio(decimated48kHz, 48000);
+    AudioSink audio(decimated48kHz, 48000);
 
     bool active = true;
     while (active)

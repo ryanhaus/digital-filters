@@ -5,8 +5,7 @@
 /**
  * Represents a complex sinusoidal signal that sweeps through frequencies at a given rate.
  */
-template<typename T>
-class SweepSinusoidalSource : public SinusoidalSource<T>
+class SweepSinusoidalSource : public SinusoidalSource
 {
 public:
     /**
@@ -18,22 +17,12 @@ public:
      * @param deltaFreq How much to increase the frequency by per step
      * @param phase The phase in radians.
      */
-    SweepSinusoidalSource(T samplingFreq, T freqStart, size_t samplesPerFreq, T deltaFreq, T phase)
-        : SinusoidalSource<T>(samplingFreq, freqStart, phase),
-          freqStart(freqStart),
-          samplesPerFreq(samplesPerFreq),
-          deltaFreq(deltaFreq)
-    {}
+    SweepSinusoidalSource(float samplingFreq, float freqStart, size_t samplesPerFreq, float deltaFreq, float phase);
 
-    complex<T> nextSample()
-    {
-        this->freq = freqStart + deltaFreq * (T)(this->n / samplesPerFreq);
-
-        return SinusoidalSource<T>::nextSample();
-    }
+    complex<float> nextSample();
 
 private:
-    T freqStart; //!< The starting frequency
+    float freqStart; //!< The starting frequency
     size_t samplesPerFreq; //<! Number of samples spent per frequency step
-    T deltaFreq; //<! Increase in frequency per step
+    float deltaFreq; //<! Increase in frequency per step
 };

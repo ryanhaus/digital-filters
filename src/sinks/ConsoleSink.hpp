@@ -5,8 +5,10 @@
 using std::cout;
 using std::endl;
 
-template<typename T>
-class ConsoleSink : public SignalSink<T>
+/**
+ * A sink that prints samples to the console.
+ */
+class ConsoleSink : public SignalSink
 {
 public:
     /**
@@ -14,21 +16,12 @@ public:
      *
      * @param signal The signal going into the sink.
      */
-    ConsoleSink(Signal<T>& signal)
-    : SignalSink<T>(signal)
-    {}
+    ConsoleSink(Signal& signal);
 
     /**
      * Prints samples over a given range to the console.
      *
      * @param nSamples Number of samples to take.
      */
-    void printSamples(size_t nSamples)
-    {
-        for (size_t n = 0; n < nSamples; n++)
-        {
-            complex<T> sample = this->signal.nextSample();
-            cout << "n = " << n << ": x(n) = " << sample << "\t(mag: " << abs(sample) << ")" << endl;
-        }
-    }
+    void printSamples(size_t nSamples);
 };

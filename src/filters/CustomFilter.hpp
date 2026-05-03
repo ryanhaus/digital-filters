@@ -5,8 +5,7 @@
 /**
  * A filter that takes in a custom lambda function, allowing for easy custom filters.
  */
-template<typename T>
-class CustomFilter : public Filter<T>
+class CustomFilter : public Filter
 {
 public:
     /**
@@ -15,16 +14,9 @@ public:
      * @param inputSignal The input signal to the filter.
      * @param func The filter's function, takes in the current sample and returns the filtered sample.
      */
-    CustomFilter(Signal<T>& inputSignal, std::function<complex<T>(complex<T>)> func)
-        : Filter<T>(inputSignal),
-          func(func)
-    {}
+    CustomFilter(Signal& inputSignal, std::function<complex<float>(complex<float>)> func);
 
-    complex<T> nextSample()
-    {
-        complex<T> currentSample = this->inputSignal.nextSample();
-        return this->func(currentSample);
-    }
+    complex<float> nextSample();
 private:
-    std::function<complex<T>(complex<T>)> func;
+    std::function<complex<float>(complex<float>)> func;
 };
