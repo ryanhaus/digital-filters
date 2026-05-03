@@ -50,7 +50,7 @@ public:
             for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
             {
                 complex<T> sample = this->signal.nextSample();
-                sampleBuffer[i] = (float)sample.real();
+                sampleBuffer[i] = 0.25 * (float)sample.real();
             }
 
             SDL_PutAudioStreamData(stream, sampleBuffer, sizeof(sampleBuffer));
