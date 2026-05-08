@@ -1,10 +1,8 @@
 #pragma once
 #include "Filter.hpp"
 #include <vector>
-#include <deque>
 
 using std::vector;
-using std::deque;
 
 class FIRFilter : public Filter
 {
@@ -22,5 +20,6 @@ public:
 
 private:
     vector<float> taps;
-    deque<complex<float>> sampleBuffer;
+    vector<complex<float>> sampleBuffer;
+    size_t writeIndex;
 };
