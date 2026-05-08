@@ -25,7 +25,7 @@ public:
     void handleAudio();
 
 private:
-    const static int SAMPLE_BUFFER_SIZE = 2048;
+    const static int SAMPLE_BUFFER_SIZE = 4096;
     SDL_AudioSpec spec;
     SDL_AudioStream* stream;
     float sampleBuffer[SAMPLE_BUFFER_SIZE];

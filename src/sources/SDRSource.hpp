@@ -32,7 +32,7 @@ public:
     SoapySDR::Device* getSDRDevice();
 
 private:
-    const static size_t SDR_BUFFER_SIZE = 1024;
+    const static size_t SDR_BUFFER_SIZE = 2 << 16;
 
     SoapySDR::Device* sdr;
     SoapySDR::Stream* rxStream;

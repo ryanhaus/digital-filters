@@ -2,6 +2,8 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
 #include <stdexcept>
+#include <thread>
+#include <chrono>
 #include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
@@ -28,9 +30,8 @@ int main()
         throw std::runtime_error("Could not create SDL renderer: " + std::string(SDL_GetError()));
 
     /* referenced: https://www.site2241.net/march2025.htm */
-    // tune to FM 89.7 MHz
     float samplingFreq = 2.4e6;
-    float sdrFreq = 89.7e6;
+    float sdrFreq = 101.5e6;
     float sdrGain = 24.0; // dB
 
     float fmDeviation = 100e3;
@@ -73,6 +74,19 @@ int main()
     AudioSink audio(decimated48kHz, 48000);
 
     bool active = true;
+
+    // create thread to handle audio
+    std::thread audioThread([&active, &audio]()
+        {
+            while (active)
+            {
+                audio.handleAudio();
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            }
+        }
+    );
+
+    // handle video
     while (active)
     {
         SDL_Event e;
@@ -82,12 +96,11 @@ int main()
                 active = false;
         }
 
-        audio.handleAudio();
-
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
     }
 
+    audioThread.join();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
