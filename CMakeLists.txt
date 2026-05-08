@@ -3,6 +3,8 @@ project(digital-filters)
 
 find_package(SDL3 REQUIRED)
 find_package(SoapySDR CONFIG REQUIRED)
+message("Downloading dependencies")
+include(fetch_dependencies.cmake)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
