@@ -5,6 +5,7 @@ Experiments with digital filters
  - [cmake](https://cmake.org/) (and a C++ compiler)
  - [gnuplot](http://www.gnuplot.info/)
  - [SoapySDR](https://github.com/pothosware/SoapySDR)
+    - May also require [SoapyRTLSDR](https://github.com/pothosware/SoapyRTLSDR)
  - [SDL3](https://github.com/libsdl-org/SDL)
  - [Doxygen](https://www.doxygen.nl/) (for documentation)
 
