@@ -48,3 +48,9 @@ target_include_directories(implot
         ${CMAKE_CURRENT_LIST_DIR}/deps/imgui/backends
         ${CMAKE_CURRENT_LIST_DIR}/deps/implot
 )
+
+target_compile_definitions(implot
+    PRIVATE
+        IMPLOT_CUSTOM_NUMERIC_TYPES="(float)"
+        IMPLOT_NO_FORCE_INLINE
+)
