@@ -32,4 +32,6 @@ target_link_libraries(main
     PRIVATE
         SDL3::SDL3
         SoapySDR
+        imgui
+        implot
 )

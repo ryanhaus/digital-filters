@@ -1,5 +1,7 @@
 # digital-filters
-Experiments with digital filters
+Experiments with digital filters using a Nooelec RTL-SDR device.
+
+Right now, it's configured to be an FM radio receiver.
 
 ## Dependencies
  - [cmake](https://cmake.org/) (and a C++ compiler)

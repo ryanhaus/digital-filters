@@ -1,6 +1,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_init.h>
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
+#include <implot.h>
 #include <stdexcept>
 #include <thread>
 #include <chrono>
@@ -28,6 +32,13 @@ int main()
     SDL_SetRenderVSync(renderer, 1);
     if (renderer == nullptr)
         throw std::runtime_error("Could not create SDL renderer: " + std::string(SDL_GetError()));
+
+    // setup imgui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
+    ImPlot::CreateContext();
 
     /* referenced: https://www.site2241.net/march2025.htm */
     float samplingFreq = 2.4e6;
@@ -89,18 +100,41 @@ int main()
     // handle video
     while (active)
     {
+        // events
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
+            ImGui_ImplSDL3_ProcessEvent(&e);
             if (e.type == SDL_EVENT_QUIT || e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
                 active = false;
         }
 
+        // imgui
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("SDR config");
+
+        ImGui::End();
+
+        // render
+        ImGui::Render();
+
         SDL_RenderClear(renderer);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
     }
 
-    audioThread.join();
+    // quit
+    audioThread.join(); // stops when active == true
+
+    ImPlot::DestroyContext();
+
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
