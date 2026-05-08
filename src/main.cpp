@@ -116,6 +116,20 @@ int main()
 
         ImGui::Begin("SDR config");
 
+        static float channelMHz = 101.5;
+        if (ImGui::SliderFloat("Channel (MHz)", &channelMHz, 88, 108, "%.1f"))
+        {
+            sdrFreq = channelMHz * 1e6;
+
+            // round to nearest 100kHz channel
+            const float roundTo = 100e3;
+            sdrFreq = roundTo * round(sdrFreq / roundTo);
+
+            // set SDR freq
+            source.getSDRDevice()
+                ->setFrequency(SOAPY_SDR_RX, 0, sdrFreq);
+        }
+
         ImGui::End();
 
         // render
