@@ -51,6 +51,9 @@ target_include_directories(implot
 
 target_compile_definitions(implot
     PRIVATE
-        IMPLOT_CUSTOM_NUMERIC_TYPES="(float)"
         IMPLOT_NO_FORCE_INLINE
+)
+target_compile_options(implot
+    PRIVATE
+        "-DIMPLOT_CUSTOM_NUMERIC_TYPES=(float)"
 )

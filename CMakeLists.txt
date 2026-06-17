@@ -24,6 +24,7 @@ target_sources(main
 
         src/sinks/ConsoleSink.cpp
         src/sinks/AudioSink.cpp
+        src/sinks/PlotSink.cpp
 
         src/utils/FIRCoefficientCalculator.cpp)
 

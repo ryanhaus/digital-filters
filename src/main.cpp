@@ -15,6 +15,7 @@
 #include "filters/CustomFilter.hpp"
 #include "filters/FilterPipeline.hpp"
 #include "sinks/AudioSink.hpp"
+#include "sinks/PlotSink.hpp"
 
 int main()
 {
@@ -82,6 +83,10 @@ int main()
     AudioSink audio(48000);
     filters.attachTo(audio);
 
+    // plot of audio
+    PlotSink audioPlot("Audio Plot");
+    filters.attachTo(audioPlot);
+
     // create thread to drive the pipeline from the source
     bool active = true;
 
@@ -126,6 +131,8 @@ int main()
             source.getSDRDevice()
                 ->setFrequency(SOAPY_SDR_RX, 0, sdrFreq);
         }
+
+        audioPlot.frame();
 
         ImGui::End();
 
