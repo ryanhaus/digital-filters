@@ -1,23 +1,16 @@
 #pragma once
-#include "../Signal.hpp"
+#include "../sinks/SignalSink.hpp"
 
-/*
- * Represents a digital filter that takes in a signal and outputs a filtered signal.
- */
-class Filter : public Signal
+// generic filter class
+class Filter : public SignalSink
 {
 public:
-    /*
-     * Constructs a digital filter.
-     *
-     * @param inputSignal The input signal of the filter.
-     */
-    Filter(Signal& inputSignal)
-        : inputSignal(inputSignal)
+    Filter(SignalSink& destination)
+        : destination(destination)
     {}
 
     virtual ~Filter() = default;
 
 protected:
-    Signal& inputSignal; //<! The input signal of the filter.
+    SignalSink& destination;
 };

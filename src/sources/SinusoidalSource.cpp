@@ -1,11 +1,20 @@
 #include "SinusoidalSource.hpp"
 
-SinusoidalSource::SinusoidalSource(float samplingFreq, float freq, float phase)
-    : samplingFreq(samplingFreq),
+SinusoidalSource::SinusoidalSource(SignalSink& destination, float samplingFreq, float freq, float phase)
+    : destination(destination),
+      samplingFreq(samplingFreq),
       freq(freq),
       phase(phase),
       n(0)
 {}
+
+void SinusoidalSource::generate(size_t nSamples)
+{
+    for (size_t i = 0; i < nSamples; i++)
+    {
+        this->destination.processSample(this->nextSample());
+    }
+}
 
 complex<float> SinusoidalSource::nextSample()
 {

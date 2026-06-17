@@ -1,5 +1,5 @@
 #pragma once
-#include "../Signal.hpp"
+#include "../sinks/SignalSink.hpp"
 #include <SoapySDR/Constants.h>
 #include <complex>
 #include <stdexcept>
@@ -9,34 +9,24 @@
 #include <SoapySDR/Types.hpp>
 #include <SoapySDR/Formats.hpp>
 
-/**
- * Gets samples from a connected SDR device using SoapySDR.
- * https://github.com/pothosware/SoapySDR (needs to be installed)
- */
-class SDRSource : public Signal
+// gets samples from an external USB SDR dongle
+// uses SoapySDR: https://github.com/pothosware/SoapySDR (needs to be installed)
+class SDRSource
 {
 public:
-    /**
-     * Initializes an SDR source. For now, assumes an RTL-SDR device is connected.
-     *
-     * @param samplingFrequency The rate at which the SDR device will be configured to sample.
-     * @param sdrFrequency The frequency the SDR will be tuned to.
-     * @param sdrGain Gain of RX in dB.
-     */
-    SDRSource(float samplingFrequency, float sdrFrequency, float sdrGain);
-
+    SDRSource(SignalSink& destination, float samplingFrequency, float sdrFrequency, float sdrGain);
     ~SDRSource();
 
-    complex<float> nextSample();
-
+    void processBlock();
     SoapySDR::Device* getSDRDevice();
 
 private:
+    SignalSink& destination;
+
     const static size_t SDR_BUFFER_SIZE = 2 << 16;
 
     SoapySDR::Device* sdr;
     SoapySDR::Stream* rxStream;
 
     complex<float> buffer[SDR_BUFFER_SIZE];
-    int bufferLen, bufferPtr;
 };

@@ -4,29 +4,17 @@
 #include <stdexcept>
 #include <iostream>
 
-/**
- * A sink that plays audio from the given samples. Only considers real part of signal.
- */
+// sink that plays samples as audio
 class AudioSink : public SignalSink
 {
 public:
-    /**
-     * Constructs a signal sink that will play audio from the given signal.
-     *
-     * @param signal The signal going into the sink.
-     * @param sampleRate The sampling rate for the audio
-     */
-    AudioSink(Signal& signal, int sampleRate);
-
-    /**
-     * For audio handling, should be called in event loop. Queues more audio
-     * samples, if necessary.
-     */
-    void handleAudio();
+    AudioSink(int sampleRate);
+    void processSample(complex<float> sample) override;
 
 private:
     const static int SAMPLE_BUFFER_SIZE = 4096;
     SDL_AudioSpec spec;
     SDL_AudioStream* stream;
     float sampleBuffer[SAMPLE_BUFFER_SIZE];
+    int bufferIndex = 0;
 };

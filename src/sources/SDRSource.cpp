@@ -1,8 +1,7 @@
 #include "SDRSource.hpp"
 
-SDRSource::SDRSource(float samplingFrequency, float sdrFrequency, float sdrGain)
-    : bufferLen(0),
-      bufferPtr(0)
+SDRSource::SDRSource(SignalSink& destination, float samplingFrequency, float sdrFrequency, float sdrGain)
+    : destination(destination)
 {
     using std::vector;
     using std::string;
@@ -11,7 +10,7 @@ SDRSource::SDRSource(float samplingFrequency, float sdrFrequency, float sdrGain)
     // find SDR devices
     SoapySDR::KwargsList results = SoapySDR::Device::enumerate();
     
-    // Go through each SDR device and print info
+    // go through each SDR device and print info
     size_t i;
     SoapySDR::Kwargs::iterator it;
     for(i = 0; i < results.size(); ++i)
@@ -89,34 +88,30 @@ SDRSource::~SDRSource()
     SoapySDR::Device::unmake(sdr);
 }
 
-complex<float> SDRSource::nextSample()
+void SDRSource::processBlock()
 {
-    // Read from device, if necessary
-    if (bufferPtr == bufferLen)
+    void* buffs[] = { buffer };
+    int flags;
+    long long timeNs;
+    int ret;
+
+    // retry on timeout
+    for (int retry = 0; retry < 10; retry++)
     {
-        void* buffs[] = { buffer };
-        int flags;
-        long long timeNs;
-        int ret;
-
-        // Retry on timeout
-        for (int retry = 0; retry < 10; retry++)
-        {
-            ret = sdr->readStream(rxStream, buffs, SDR_BUFFER_SIZE, flags, timeNs);
-            if (ret != SOAPY_SDR_TIMEOUT) break;
-        }
-
-        if (ret < 0)
-        {
-            throw std::runtime_error("Error reading from SDR stream: " + std::string(SoapySDR_errToStr(ret)));
-        }
-
-        bufferLen = ret;
-        bufferPtr = 0;
+        ret = sdr->readStream(rxStream, buffs, SDR_BUFFER_SIZE, flags, timeNs);
+        if (ret != SOAPY_SDR_TIMEOUT) break;
     }
 
-    // continue through sample buffer
-    return buffer[bufferPtr++];
+    if (ret < 0)
+    {
+        throw std::runtime_error("Error reading from SDR stream: " + std::string(SoapySDR_errToStr(ret)));
+    }
+
+    // push each sample downstream
+    for (int i = 0; i < ret; i++)
+    {
+        this->destination.processSample(buffer[i]);
+    }
 }
 
 SoapySDR::Device* SDRSource::getSDRDevice()

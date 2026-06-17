@@ -1,7 +1,7 @@
 #include "AudioSink.hpp"
 
-AudioSink::AudioSink(Signal& signal, int sampleRate)
-    : SignalSink(signal)
+AudioSink::AudioSink(int sampleRate)
+    : bufferIndex(0)
 {
     spec = {
         .format = SDL_AUDIO_F32,
@@ -22,20 +22,13 @@ AudioSink::AudioSink(Signal& signal, int sampleRate)
     SDL_ResumeAudioStreamDevice(stream);
 }
 
-/**
- * For audio handling, should be called in event loop. Queues more audio
- * samples, if necessary.
- */
-void AudioSink::handleAudio()
+void AudioSink::processSample(complex<float> sample)
 {
-    while (SDL_GetAudioStreamQueued(stream) < sizeof(sampleBuffer))
-    {
-        for (int i = 0; i < SAMPLE_BUFFER_SIZE; i++)
-        {
-            complex<float> sample = this->signal.nextSample();
-            sampleBuffer[i] = 0.25 * (float)sample.real();
-        }
+    sampleBuffer[bufferIndex++] = 0.25 * (float)sample.real();
 
+    if (bufferIndex >= SAMPLE_BUFFER_SIZE)
+    {
         SDL_PutAudioStreamData(stream, sampleBuffer, sizeof(sampleBuffer));
+        bufferIndex = 0;
     }
 }

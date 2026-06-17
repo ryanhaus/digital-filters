@@ -23,7 +23,7 @@ vector<float> FIRCoefficientCalculator::calculateLowPassCoefficients(float sampl
     vector<float> taps;
     taps.reserve(M + 1);
 
-    // Calculate using sinc function
+    // calculate using sinc function
     float normCutoffFreq = cutoffFreq / samplingFreq;
 
     for (int n = 0; n <= M; n++)
@@ -33,7 +33,7 @@ vector<float> FIRCoefficientCalculator::calculateLowPassCoefficients(float sampl
         taps.push_back(tap * windowFunction(n, M));
     }
 
-    // Normalize for unity gain
+    // normalize for unity gain
     float sum = (float)0;
     for (float tap : taps)
     {
@@ -50,7 +50,7 @@ vector<float> FIRCoefficientCalculator::calculateLowPassCoefficients(float sampl
 
 vector<float> FIRCoefficientCalculator::calculateHighPassCoefficients(float samplingFreq, float cutoffFreq, int M, float(*windowFunction)(int, int))
 {
-    // First, create a lowpass filter
+    // first, create a lowpass filter
     vector<float> taps = calculateLowPassCoefficients(samplingFreq, cutoffFreq, M, windowFunction);
 
     // then, do spectral inversion to convert from low-pass to high-pass
@@ -66,11 +66,11 @@ vector<float> FIRCoefficientCalculator::calculateHighPassCoefficients(float samp
 
 vector<float> FIRCoefficientCalculator::calculateBandPassCoefficients(float samplingFreq, float cutoffFreqLow, float cutoffFreqHigh, int M, float(*windowFunction)(int, int))
 {
-    // Create a low pass and a high pass filter with the given frequencies
+    // create a low pass and a high pass filter with the given frequencies
     vector<float> lowpassTaps = calculateLowPassCoefficients(samplingFreq, cutoffFreqHigh, M, windowFunction);
     vector<float> highpassTaps = calculateHighPassCoefficients(samplingFreq, cutoffFreqLow, M, windowFunction);
 
-    // Convolute the taps to create a band pass taps
+    // convolute the taps to create a band pass taps
     vector<float> taps = convolute(lowpassTaps, highpassTaps);
     return taps;
 }

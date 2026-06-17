@@ -1,12 +1,12 @@
 #include "CustomFilter.hpp"
 
-CustomFilter::CustomFilter(Signal& inputSignal, std::function<complex<float>(complex<float>)> func)
-    : Filter(inputSignal),
+CustomFilter::CustomFilter(SignalSink& destination, std::function<complex<float>(complex<float>)> func)
+    : Filter(destination),
       func(func)
 {}
 
-complex<float> CustomFilter::nextSample()
+void CustomFilter::processSample(complex<float> sample)
 {
-    complex<float> currentSample = this->inputSignal.nextSample();
-    return this->func(currentSample);
+    complex<float> result = this->func(sample);
+    this->destination.processSample(result);
 }

@@ -1,15 +1,17 @@
 #include "SweepSinusoidalSource.hpp"
 
-SweepSinusoidalSource::SweepSinusoidalSource(float samplingFreq, float freqStart, size_t samplesPerFreq, float deltaFreq, float phase)
-    : SinusoidalSource(samplingFreq, freqStart, phase),
+SweepSinusoidalSource::SweepSinusoidalSource(SignalSink& destination, float samplingFreq, float freqStart, size_t samplesPerFreq, float deltaFreq, float phase)
+    : SinusoidalSource(destination, samplingFreq, freqStart, phase),
       freqStart(freqStart),
       samplesPerFreq(samplesPerFreq),
       deltaFreq(deltaFreq)
 {}
 
-complex<float> SweepSinusoidalSource::nextSample()
+void SweepSinusoidalSource::generate(size_t nSamples)
 {
-    this->freq = freqStart + deltaFreq * ((float)n / samplesPerFreq);
-
-    return SinusoidalSource::nextSample();
+    for (size_t i = 0; i < nSamples; i++)
+    {
+        this->freq = freqStart + deltaFreq * ((float)n / samplesPerFreq);
+        this->destination.processSample(this->nextSample());
+    }
 }

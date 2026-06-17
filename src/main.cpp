@@ -11,7 +11,6 @@
 #include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
-#include "filters/Decimator.hpp"
 #include "filters/CustomFilter.hpp"
 #include "sinks/ConsoleSink.hpp"
 #include "sinks/AudioSink.hpp"
@@ -45,22 +44,17 @@ int main()
     float sdrFreq = 101.5e6;
     float sdrGain = 24.0; // dB
 
-    float fmDeviation = 100e3;
+    // audio at 48 kHz
+    AudioSink audio(48000);
 
-    SDRSource source(samplingFreq, sdrFreq, sdrGain);
+    // FM deemphasis + decimate by 5 (240 kHz -> 48 kHz)
+    vector<float> firTapsDeemph =
+        FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
+    FIRFilter firFilterDeemph(audio, firTapsDeemph, 5);
 
-    // FIR filter
-    vector<float> firTapsLP =
-        FIRCoefficientCalculator::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
-
-    FIRFilter firFilterLP(source, firTapsLP);
-    
-    // decimate to 240 kHz to reduce processing
-    Decimator decimated240kHz(firFilterLP, 10);
-
-    // compute polar discriminator to find the change in phase
+    // polar discriminator
     CustomFilter phaseChange(
-        decimated240kHz,
+        firFilterDeemph,
         [](complex<float> sample)
         {
             static complex<float> prevSamp = 0;
@@ -72,32 +66,27 @@ int main()
         }
     );
 
-    // FM deemphasis (approximate)
-    vector<float> firTapsDeemph =
-        FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
+    // low pass + decimate by 10 (2.4 MHz -> 240 kHz)
+    vector<float> firTapsLP =
+        FIRCoefficientCalculator::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
+    FIRFilter firFilterLP(phaseChange, firTapsLP, 10);
 
-    FIRFilter firFilterDeemph(phaseChange, firTapsDeemph);
-
-    // decimate again to 48 kHz
-    Decimator decimated48kHz(firFilterDeemph, 5);
-
-    // play output as audio
-    AudioSink audio(decimated48kHz, 48000);
+    // source signal
+    SDRSource source(firFilterLP, samplingFreq, sdrFreq, sdrGain);
 
     bool active = true;
 
-    // create thread to handle audio
-    std::thread audioThread([&active, &audio]()
+    // create thread to drive the pipeline from the source
+    std::thread processingThread([&active, &source]()
         {
             while (active)
             {
-                audio.handleAudio();
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                source.processBlock();
             }
         }
     );
 
-    // handle video
+    // handle video / UI
     while (active)
     {
         // events
@@ -141,7 +130,8 @@ int main()
     }
 
     // quit
-    audioThread.join(); // stops when active == true
+    active = false; // ensure thread stops if not already
+    processingThread.join();
 
     ImPlot::DestroyContext();
 
@@ -155,4 +145,3 @@ int main()
 
     return 0;
 }
-
