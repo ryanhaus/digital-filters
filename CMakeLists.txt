@@ -20,12 +20,12 @@ target_sources(main
 
         src/filters/FIRFilter.cpp
         src/filters/CustomFilter.cpp
+        src/filters/FilterPipeline.cpp
 
         src/sinks/ConsoleSink.cpp
         src/sinks/AudioSink.cpp
 
-        src/utils/FIRCoefficientCalculator.cpp
-)
+        src/utils/FIRCoefficientCalculator.cpp)
 
 target_link_libraries(main
     PRIVATE

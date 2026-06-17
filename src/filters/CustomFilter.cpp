@@ -1,5 +1,10 @@
 #include "CustomFilter.hpp"
 
+CustomFilter::CustomFilter(std::function<complex<float>(complex<float>)> func)
+    : Filter(),
+      func(func)
+{}
+
 CustomFilter::CustomFilter(SignalSink& destination, std::function<complex<float>(complex<float>)> func)
     : Filter(destination),
       func(func)
@@ -8,5 +13,5 @@ CustomFilter::CustomFilter(SignalSink& destination, std::function<complex<float>
 void CustomFilter::processSample(complex<float> sample)
 {
     complex<float> result = this->func(sample);
-    this->destination.processSample(result);
+    this->pushSample(result);
 }

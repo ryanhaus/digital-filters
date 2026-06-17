@@ -8,11 +8,12 @@
 #include <stdexcept>
 #include <thread>
 #include <chrono>
+#include <memory>
 #include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
 #include "filters/CustomFilter.hpp"
-#include "sinks/ConsoleSink.hpp"
+#include "filters/FilterPipeline.hpp"
 #include "sinks/AudioSink.hpp"
 
 int main()
@@ -44,39 +45,46 @@ int main()
     float sdrFreq = 101.5e6;
     float sdrGain = 24.0; // dB
 
-    // audio at 48 kHz
-    AudioSink audio(48000);
-
-    // FM deemphasis + decimate by 5 (240 kHz -> 48 kHz)
-    vector<float> firTapsDeemph =
-        FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
-    FIRFilter firFilterDeemph(audio, firTapsDeemph, 5);
-
-    // polar discriminator
-    CustomFilter phaseChange(
-        firFilterDeemph,
-        [](complex<float> sample)
-        {
-            static complex<float> prevSamp = 0;
-
-            complex<float> discr = sample * std::conj(prevSamp);
-            prevSamp = sample;
-
-            return std::arg(discr);
-        }
-    );
-
-    // low pass + decimate by 10 (2.4 MHz -> 240 kHz)
+    // taps for initial lowpass (100 kHz)
     vector<float> firTapsLP =
         FIRCoefficientCalculator::calculateLowPassCoefficients(samplingFreq, 100e3, 50, blackmanWindow);
-    FIRFilter firFilterLP(phaseChange, firTapsLP, 10);
+
+    // taps for FM deemphasis (15 kHz lowpass)
+    vector<float> firTapsDeemph =
+        FIRCoefficientCalculator::calculateLowPassCoefficients(240e3, 15000, 300, blackmanWindow);
+
+    // create filter pipeline
+    FilterPipeline filters({
+        // initial low-pass filter (isolate one channel)
+        std::make_shared<FIRFilter>(firTapsLP, 10),
+
+        // compute polar discriminator (change in phase between samples -> scalar)
+        std::make_shared<CustomFilter>(
+            [](complex<float> sample)
+            {
+                static complex<float> prevSamp = 0;
+
+                complex<float> discr = sample * std::conj(prevSamp);
+                prevSamp = sample;
+
+                return std::arg(discr);
+            }
+        ),
+
+        // FM deemphasis lowpass filter
+        std::make_shared<FIRFilter>(firTapsDeemph, 5)
+    });
 
     // source signal
-    SDRSource source(firFilterLP, samplingFreq, sdrFreq, sdrGain);
+    SDRSource source(filters, samplingFreq, sdrFreq, sdrGain);
 
-    bool active = true;
+    // audio at 48 kHz
+    AudioSink audio(48000);
+    filters.attachTo(audio);
 
     // create thread to drive the pipeline from the source
+    bool active = true;
+
     std::thread processingThread([&active, &source]()
         {
             while (active)

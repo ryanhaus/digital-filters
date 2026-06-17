@@ -8,6 +8,7 @@ using std::vector;
 class FIRFilter : public Filter
 {
 public:
+    FIRFilter(vector<float> taps, size_t decimationFactor = 1);
     FIRFilter(SignalSink& destination, vector<float> taps, size_t decimationFactor = 1);
     void processSample(complex<float> sample) override;
 

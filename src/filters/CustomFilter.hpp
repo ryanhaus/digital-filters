@@ -6,6 +6,7 @@
 class CustomFilter : public Filter
 {
 public:
+    CustomFilter(std::function<complex<float>(complex<float>)> func);
     CustomFilter(SignalSink& destination, std::function<complex<float>(complex<float>)> func);
     void processSample(complex<float> sample) override;
 private:

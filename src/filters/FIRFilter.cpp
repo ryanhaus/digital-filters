@@ -1,5 +1,15 @@
 #include "FIRFilter.hpp"
 
+FIRFilter::FIRFilter(vector<float> taps, size_t decimationFactor)
+    : Filter(),
+      taps(taps),
+      sampleBuffer(taps.size(), 0),
+      writeIndex(0),
+      decimationFactor(decimationFactor),
+      decimationCounter(0)
+{
+}
+
 FIRFilter::FIRFilter(SignalSink& destination, vector<float> taps, size_t decimationFactor)
     : Filter(destination),
       taps(taps),
@@ -47,7 +57,7 @@ void FIRFilter::processSample(complex<float> sample)
         }
 
         // push result downstream
-        this->destination.processSample(result);
+        this->pushSample(result);
 
         // reset decimation counter
         decimationCounter = 0;
