@@ -24,7 +24,7 @@ AudioSink::AudioSink(int sampleRate)
 
 void AudioSink::processSample(complex<float> sample)
 {
-    sampleBuffer[bufferIndex++] = 0.25 * (float)sample.real();
+    sampleBuffer[bufferIndex++] = (float)sample.real();
 
     if (bufferIndex >= SAMPLE_BUFFER_SIZE)
     {

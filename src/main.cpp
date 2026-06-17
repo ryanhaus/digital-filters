@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 #include <memory>
+#include <atomic>
 #include "sources/SDRSource.hpp"
 #include "utils/FIRCoefficientCalculator.hpp"
 #include "filters/FIRFilter.hpp"
@@ -45,6 +46,7 @@ int main()
     float samplingFreq = 2.4e6;
     float sdrFreq = 101.5e6;
     float sdrGain = 24.0; // dB
+    auto volume = std::make_shared<std::atomic<float>>(0.25f);
 
     // taps for initial lowpass (100 kHz)
     vector<float> firTapsLP =
@@ -73,7 +75,15 @@ int main()
         ),
 
         // FM deemphasis lowpass filter
-        std::make_shared<FIRFilter>(firTapsDeemph, 5)
+        std::make_shared<FIRFilter>(firTapsDeemph, 5),
+
+        // apply volume
+        std::make_shared<CustomFilter>(
+            [volume](complex<float> sample)
+            {
+                return sample * volume->load();
+            }
+        )
     });
 
     // source signal
@@ -132,8 +142,16 @@ int main()
                 ->setFrequency(SOAPY_SDR_RX, 0, sdrFreq);
         }
 
-        audioPlot.frame();
+        static float volumeVal = 0.25f;
+        if (ImGui::SliderFloat("Volume", &volumeVal, 0.0f, 1.0f, "%.2f"))
+        {
+            volume->store(volumeVal);
+        }
 
+        ImGui::End();
+
+        ImGui::Begin("Plots");
+        audioPlot.frame();
         ImGui::End();
 
         // render
